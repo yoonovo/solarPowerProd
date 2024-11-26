@@ -1,7 +1,7 @@
 type SolarPowerProdListType = {
   targetFac: string;
   prodPeriod: string;
-  prodInfo: number;
+  prodInfo: string;
   prodUnit: string;
   prodStartDate: string;
   prodEndDate: string;
