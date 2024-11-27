@@ -1,8 +1,5 @@
 import { Box, Card, CardContent, Chip, Grid2, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import getSolarPowerProdList from "../services/getSolarPowerProdList";
 import { SolarPowerProdListType } from "../types/solarPowerProdListType";
-import { insertComma } from "../utils/number";
 import { blue, grey } from "@mui/material/colors";
 
 function CardContainer({ value }: { value: SolarPowerProdListType }) {
@@ -24,7 +21,6 @@ function CardContainer({ value }: { value: SolarPowerProdListType }) {
           variant="outlined"
           sx={{
             fontSize: "15px",
-            // borderWidth: 0,
             backgroundColor: blue[50],
             color: blue[700],
             borderColor: blue[100],
@@ -39,15 +35,8 @@ function CardContainer({ value }: { value: SolarPowerProdListType }) {
             mb: 2,
           }}
         >
-          {/* <Typography sx={{ fontSize: "px", fontWeight: 700 }}>
-            {value.prodPeriod}
-          </Typography> */}
           <Typography sx={{ fontSize: "35px", fontWeight: 700 }}>
-            {insertComma(
-              value.prodPeriod === "월간"
-                ? String(Number(value.prodInfo) * 12)
-                : value.prodInfo
-            )}
+            {value.prodInfo}
           </Typography>
           <Typography sx={{ fontSize: "20px", fontWeight: 700 }}>
             ({value.prodUnit})

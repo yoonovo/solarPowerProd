@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import getSolarPowerProdList from "../services/getSolarPowerProdList";
 import { SolarPowerProdListType } from "../types/solarPowerProdListType";
 import CardContainer from "../components/Card";
+import Table from "../components/Table";
+import { insertComma } from "../utils/number";
 
 import {
   Box,
@@ -16,6 +18,7 @@ import TableRowsSharpIcon from "@mui/icons-material/TableRowsSharp";
 
 const mockData = [
   {
+    id: 1,
     frstRegistPnttm: "2024-05-14",
     lastRegistPnttm: "2024-05-28",
     prodEndDate: "2023-12-31",
@@ -26,40 +29,64 @@ const mockData = [
     targetFac: "은계어울림센터",
   },
   {
+    id: 2,
     frstRegistPnttm: "2024-05-14",
     lastRegistPnttm: "2024-05-28",
     prodEndDate: "2023-12-31",
     prodInfo: "78550",
     prodPeriod: "연간",
     prodStartDate: "2023-01-01",
-    prodUnit: "kw",
+    prodUnit: "kwh",
     targetFac: "abc행복학습타운 한마음관",
   },
   {
+    id: 3,
     frstRegistPnttm: "2024-05-14",
     lastRegistPnttm: "2024-05-28",
     prodEndDate: "2023-12-31",
     prodInfo: "68453",
     prodPeriod: "연간",
     prodStartDate: "2023-01-01",
-    prodUnit: "kw",
+    prodUnit: "mw",
     targetFac: "오이도박물관",
   },
 ];
 
 function Main() {
-  const [list, setList] = useState<SolarPowerProdListType[]>(mockData);
   const [msg, setMsg] = useState<string>("조회된 데이터가 없습니다.");
-  const [dateOpt, setDateOtp] = useState<string>("월간");
+  const [dateOpt, setDateOpt] = useState<"월간" | "연간">("월간");
+  const [listTypeOpt, setListTypeOpt] = useState<"카드형" | "테이블형">(
+    "테이블형"
+  );
 
-  const { data, isLoading } = getSolarPowerProdList({
+  const { data } = getSolarPowerProdList({
     pageIndex: 20,
     firstIndex: 0,
   });
 
+  const list = useMemo(() => {
+    if (!data || !data.body) return [...mockData];
+
+    const { items } = data.body;
+    return items.map((v: SolarPowerProdListType, i: number) => {
+      let result = "";
+      switch (true) {
+        case dateOpt === "월간" && v.prodPeriod === "연간":
+          result = String(Math.round(Number(v.prodInfo) / 12));
+          break;
+        case dateOpt === "연간" && v.prodPeriod === "월간":
+          result = String(Number(v.prodInfo) * 12);
+          break;
+        default:
+          result = v.prodInfo;
+          break;
+      }
+      return { ...v, prodInfo: insertComma(result), id: i + 1 };
+    });
+  }, [data, dateOpt]);
+
   useEffect(() => {
     if (!data) return;
-    setList(data.body ? data.body.items : mockData);
     setMsg(data.body ? "조회된 데이터가 없습니다." : data);
   }, [data]);
 
@@ -71,7 +98,6 @@ function Main() {
         display: "flex",
         flexDirection: "column",
         alignContent: "start",
-        // alignItems: "center",
       }}
     >
       <Box
@@ -98,25 +124,27 @@ function Main() {
         <Box>
           <ButtonGroup size="small">
             <Button
-              onClick={() => setDateOtp("연간")}
+              onClick={() => setDateOpt("연간")}
               sx={{ background: dateOpt === "연간" ? indigo[50] : "#fff" }}
             >
               연간
             </Button>
             <Button
-              onClick={() => setDateOtp("월간")}
+              onClick={() => setDateOpt("월간")}
               sx={{ background: dateOpt === "월간" ? indigo[50] : "#fff" }}
             >
               월간
             </Button>
           </ButtonGroup>
-          <IconButton>
-            {/* 테이블로 보기 */}
-            <TableRowsSharpIcon sx={{ color: blue[500] }} />
+          <IconButton onClick={() => setListTypeOpt("테이블형")}>
+            <TableRowsSharpIcon
+              sx={{ color: listTypeOpt === "테이블형" ? blue[500] : grey[500] }}
+            />
           </IconButton>
-          <IconButton>
-            {/* 카드형으로 보기 */}
-            <GridViewSharpIcon />
+          <IconButton onClick={() => setListTypeOpt("카드형")}>
+            <GridViewSharpIcon
+              sx={{ color: listTypeOpt === "카드형" ? blue[500] : grey[500] }}
+            />
           </IconButton>
         </Box>
       </Box>
@@ -134,10 +162,16 @@ function Main() {
           mx: "10%",
         }}
       >
-        {list.length == 0 ? (
-          <Typography>{msg}</Typography>
+        {listTypeOpt === "카드형" ? (
+          list.length == 0 ? (
+            <Typography>{msg}</Typography>
+          ) : (
+            list.map((v: SolarPowerProdListType, i: number) => (
+              <CardContainer key={"card" + i} value={v} />
+            ))
+          )
         ) : (
-          list.map((v, i) => <CardContainer key={"card" + i} value={v} />)
+          <Table list={list} />
         )}
       </Box>
     </Box>

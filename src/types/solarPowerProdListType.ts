@@ -1,4 +1,5 @@
 type SolarPowerProdListType = {
+  id: number;
   targetFac: string;
   prodPeriod: string;
   prodInfo: string;
