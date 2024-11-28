@@ -1,18 +1,16 @@
 import { useMemo, useState } from "react";
 import getSolarPowerProdList from "../../services/getSolarPowerProdList";
 import { SolarPowerProdListType } from "../../types/solarPowerProdListType";
-import CardContainer from "../../components/Card/Card";
+import Cards from "../../components/Cards/Cards";
 import Table from "../../components/Table/Table";
 import { insertComma } from "../../utils/number";
 import S from "./main.css";
-
 import {
   Box,
   Button,
   IconButton,
   Typography,
   ButtonGroup,
-  Alert,
 } from "@mui/material";
 import GridViewSharpIcon from "@mui/icons-material/GridViewSharp";
 import TableRowsSharpIcon from "@mui/icons-material/TableRowsSharp";
@@ -66,6 +64,7 @@ function Main() {
     firstIndex: 0,
   });
 
+  // 서버에서 받아온 데이터를 가공 (월간/연간 통일, id 추가 등)
   const list = useMemo(() => {
     setIsData(data && data.body);
     const items = data && data.body ? data.body.items : mockData;
@@ -93,10 +92,12 @@ function Main() {
         <Typography sx={S.headerTitle}>시흥 태양광발전소 정보 조회</Typography>
       </S.HeaderBox>
       <S.SubContentsBox>
-        <Typography color="textSecondary">
-          {!isData &&
-            "※ 공공데이터포탈 서비스 요청제한 횟수가 초과되어 임시 데이터로 대신 출력합니다."}
-        </Typography>
+        {!isData && (
+          <Typography color="textSecondary">
+            ※ 공공데이터포탈 서비스 요청제한 횟수가 초과되어 임시 데이터로 대신
+            출력합니다.
+          </Typography>
+        )}
         <Box>
           <ButtonGroup size="small">
             <Button
@@ -122,15 +123,7 @@ function Main() {
       </S.SubContentsBox>
       <S.DataContentsBox>
         {listTypeOpt === "카드형" ? (
-          list.length == 0 ? (
-            <Alert severity="info" sx={{ width: "100%", height: 40 }}>
-              조회된 데이터가 없습니다.
-            </Alert>
-          ) : (
-            list.map((v: SolarPowerProdListType, i: number) => (
-              <CardContainer key={"card" + i} value={v} />
-            ))
-          )
+          <Cards list={list} />
         ) : (
           <Table list={list} />
         )}
