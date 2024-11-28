@@ -1,40 +1,13 @@
 import { Box, Card, CardContent, Chip, Grid2, Typography } from "@mui/material";
-import { SolarPowerProdListType } from "../types/solarPowerProdListType";
-import { blue, grey } from "@mui/material/colors";
+import { SolarPowerProdListType } from "../../types/solarPowerProdListType";
+import S from "./card.css";
 
 function CardContainer({ value }: { value: SolarPowerProdListType }) {
   return (
-    <Card
-      variant="outlined"
-      sx={{
-        display: "flex",
-        width: "calc(20% - 24px)",
-        height: 220,
-        bgcolor: "#fff",
-        borderColor: blue[100],
-        boxShadow: "3px 2px 5px " + blue[50],
-      }}
-    >
+    <Card variant="outlined" sx={S.cardContainer}>
       <CardContent>
-        <Chip
-          label={value.targetFac}
-          variant="outlined"
-          sx={{
-            fontSize: "15px",
-            backgroundColor: blue[50],
-            color: blue[700],
-            borderColor: blue[100],
-          }}
-        />
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            mt: 1,
-            mb: 2,
-          }}
-        >
+        <Chip label={value.targetFac} variant="outlined" sx={S.tag} />
+        <Box sx={S.prodBox}>
           <Typography sx={{ fontSize: "35px", fontWeight: 700 }}>
             {value.prodInfo}
           </Typography>

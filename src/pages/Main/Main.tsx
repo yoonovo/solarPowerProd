@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
-import getSolarPowerProdList from "../services/getSolarPowerProdList";
-import { SolarPowerProdListType } from "../types/solarPowerProdListType";
-import CardContainer from "../components/Card";
-import Table from "../components/Table";
-import { insertComma } from "../utils/number";
+import { useMemo, useState } from "react";
+import getSolarPowerProdList from "../../services/getSolarPowerProdList";
+import { SolarPowerProdListType } from "../../types/solarPowerProdListType";
+import CardContainer from "../../components/Card/Card";
+import Table from "../../components/Table/Table";
+import { insertComma } from "../../utils/number";
+import S from "./main.css";
 
 import {
   Box,
@@ -11,10 +12,11 @@ import {
   IconButton,
   Typography,
   ButtonGroup,
+  Alert,
 } from "@mui/material";
-import { blue, grey, indigo } from "@mui/material/colors";
 import GridViewSharpIcon from "@mui/icons-material/GridViewSharp";
 import TableRowsSharpIcon from "@mui/icons-material/TableRowsSharp";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 const mockData = [
   {
@@ -53,21 +55,20 @@ const mockData = [
 ];
 
 function Main() {
-  const [msg, setMsg] = useState<string>("조회된 데이터가 없습니다.");
+  const [isData, setIsData] = useState<boolean>(false);
   const [dateOpt, setDateOpt] = useState<"월간" | "연간">("월간");
   const [listTypeOpt, setListTypeOpt] = useState<"카드형" | "테이블형">(
     "테이블형"
   );
 
   const { data } = getSolarPowerProdList({
-    pageIndex: 20,
+    pageIndex: 100,
     firstIndex: 0,
   });
 
   const list = useMemo(() => {
-    if (!data || !data.body) return [...mockData];
-
-    const { items } = data.body;
+    setIsData(data && data.body);
+    const items = data && data.body ? data.body.items : mockData;
     return items.map((v: SolarPowerProdListType, i: number) => {
       let result = "";
       switch (true) {
@@ -85,86 +86,46 @@ function Main() {
     });
   }, [data, dateOpt]);
 
-  useEffect(() => {
-    if (!data) return;
-    setMsg(data.body ? "조회된 데이터가 없습니다." : data);
-  }, [data]);
-
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignContent: "start",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          width: "100%",
-          height: 70,
-          background: grey[500],
-        }}
-      >
-        <Typography variant="h4">시흥 태양광발전소 정보 조회</Typography>
-      </Box>
-      <Box
-        sx={{
-          width: "80%",
-          height: 60,
-          mx: "10%",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography>총 {list.length} 개</Typography>
+    <S.MainBox>
+      <S.HeaderBox>
+        <LightModeIcon sx={S.sunIcon} />
+        <Typography sx={S.headerTitle}>시흥 태양광발전소 정보 조회</Typography>
+      </S.HeaderBox>
+      <S.SubContentsBox>
+        <Typography color="textSecondary">
+          {!isData &&
+            "※ 공공데이터포탈 서비스 요청제한 횟수가 초과되어 임시 데이터로 대신 출력합니다."}
+        </Typography>
         <Box>
           <ButtonGroup size="small">
             <Button
               onClick={() => setDateOpt("연간")}
-              sx={{ background: dateOpt === "연간" ? indigo[50] : "#fff" }}
+              sx={S.activeButtonGroup(dateOpt, "연간")}
             >
               연간
             </Button>
             <Button
               onClick={() => setDateOpt("월간")}
-              sx={{ background: dateOpt === "월간" ? indigo[50] : "#fff" }}
+              sx={S.activeButtonGroup(dateOpt, "월간")}
             >
               월간
             </Button>
           </ButtonGroup>
           <IconButton onClick={() => setListTypeOpt("테이블형")}>
-            <TableRowsSharpIcon
-              sx={{ color: listTypeOpt === "테이블형" ? blue[500] : grey[500] }}
-            />
+            <TableRowsSharpIcon sx={S.activeIcon(listTypeOpt, "테이블형")} />
           </IconButton>
           <IconButton onClick={() => setListTypeOpt("카드형")}>
-            <GridViewSharpIcon
-              sx={{ color: listTypeOpt === "카드형" ? blue[500] : grey[500] }}
-            />
+            <GridViewSharpIcon sx={S.activeIcon(listTypeOpt, "카드형")} />
           </IconButton>
         </Box>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          overflowY: "scroll",
-          width: "calc(80% - 24px)",
-          height: "calc(100vh - 178px)",
-          background: grey[50],
-          gap: "24px",
-          py: 3,
-          pl: 3,
-          mx: "10%",
-        }}
-      >
+      </S.SubContentsBox>
+      <S.DataContentsBox>
         {listTypeOpt === "카드형" ? (
           list.length == 0 ? (
-            <Typography>{msg}</Typography>
+            <Alert severity="info" sx={{ width: "100%", height: 40 }}>
+              조회된 데이터가 없습니다.
+            </Alert>
           ) : (
             list.map((v: SolarPowerProdListType, i: number) => (
               <CardContainer key={"card" + i} value={v} />
@@ -173,8 +134,8 @@ function Main() {
         ) : (
           <Table list={list} />
         )}
-      </Box>
-    </Box>
+      </S.DataContentsBox>
+    </S.MainBox>
   );
 }
 

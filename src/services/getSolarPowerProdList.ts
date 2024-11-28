@@ -12,14 +12,16 @@ const setSimpleToJson = (
   arrFrom: string[],
   { elements }: { elements: any }
 ) => {
-  return !elements[0].text
+  if (!elements) return;
+
+  return !elements[0]?.text
     ? elements.reduce((tot: Record<string, any>, el: any) => {
         tot[el.name] = arrFrom.includes(el.name) // items는 배열로 표시해야 함으로 예외처리
           ? el.elements.map((v: any) => setSimpleToJson(arrFrom, v))
           : setSimpleToJson(arrFrom, el);
         return tot;
       }, {})
-    : elements[0].text;
+    : elements[0]?.text;
 };
 
 // 공공데이터포탈 open api - 태양광발전생산정보조회서비스(시흥)
