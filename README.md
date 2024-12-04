@@ -2,6 +2,8 @@
 
 ## 소개
 
+- 블로그 내용 참고 (https://yoonovo.tistory.com/14)
+
 ## Tech stack
 
 - node v22
