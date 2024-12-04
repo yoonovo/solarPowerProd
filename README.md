@@ -1,50 +1,33 @@
-# React + TypeScript + Vite
+# 시흥 태양광발전생성량 정보 조회 페이지
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 소개
 
-Currently, two official plugins are available:
+## Tech stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- node v22
+- npm v10
+- React v18
+- typescript v5
+- vite v5
+- tanstack/react-query v5
+- axios v1
+- material ui v6
 
-## Expanding the ESLint configuration
+## Open API
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- 공공데이터포탈(https://www.data.go.kr/)에서 제공하는 open api 사용
 
-- Configure the top-level `parserOptions` property like this:
+|                    API명                    |        활용기간         | 데이터포멧 |                                 설명                                  |
+| :-----------------------------------------: | :---------------------: | :--------: | :-------------------------------------------------------------------: |
+| `시흥도시공사_태양광발전생산정보조회서비스` | 2024-11-20 ~ 2026-11-20 |    XML     | 시흥 태양광 발전소의 생산시작일자, 종료일자, 생산주기, 생산량 등 조회 |
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 시작 가이드
+
 ```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+// Git clone
+git clone https://github.com/yoonovo/solarPowerProd.git
+// 패키지 설치
+npm install
+// 프로젝트 실행 후 http://localhost:5173/ 으로 접속
+npm run dev
 ```
