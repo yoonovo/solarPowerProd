@@ -114,7 +114,7 @@ function Main() {
             <GridViewSharpIcon sx={S.activeIcon(listTypeOpt, "카드형")} />
           </IconButton>
         </Box>
-        {isData && (
+        {!isData && (
           <Typography color="textSecondary">
             ※ 공공데이터포탈 서비스 요청제한 횟수가 초과되어 임시 데이터로 대신
             출력합니다.

@@ -9,16 +9,16 @@ const AUTH_KEY =
 
 // xml-js로 바꾼 json을 간소화
 const setSimpleToJson = (
-  arrFrom: string[],
-  { elements }: { elements: any }
+  { elements }: { elements: any },
+  arrForm: string[]
 ) => {
   if (!elements) return;
 
   return !elements[0]?.text
     ? elements.reduce((tot: Record<string, any>, el: any) => {
-        tot[el.name] = arrFrom.includes(el.name) // items는 배열로 표시해야 함으로 예외처리
-          ? el.elements.map((v: any) => setSimpleToJson(arrFrom, v))
-          : setSimpleToJson(arrFrom, el);
+        tot[el.name] = arrForm.includes(el.name) // items는 배열로 표시해야 함으로 예외처리
+          ? el.elements.map((v: any) => setSimpleToJson(v, arrForm))
+          : setSimpleToJson(el, arrForm);
         return tot;
       }, {})
     : elements[0]?.text;
@@ -44,7 +44,7 @@ const getSolarPowerProdList = (params: GetSolarPowerProdListParams) =>
         spaces: 4,
       });
 
-      const list = setSimpleToJson(["items"], JSON.parse(xml).elements[0]);
+      const list = setSimpleToJson(JSON.parse(xml).elements[0], ["items"]);
       let result;
       if (list.body) {
         result = list;
